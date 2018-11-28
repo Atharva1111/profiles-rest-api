@@ -1,20 +1,28 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 from django.shortcuts import render
+
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
+
 from . import serializers
 from . import models
-from rest_framework import status
+from . import permissions
+
 
 # Create your views here.
 class  HelloApiView(APIView):
     """Test API View."""
+
     serializer_class = serializers.HelloSerializer
 
     def get(self, request, format=None):
         """Returns a list of APIView features."""
+
         an_apiview = [
             'Uses HHTP mathods as functions (get, post, patch, put, delete)',
             'It is similar to traditional django view',
@@ -25,11 +33,14 @@ class  HelloApiView(APIView):
 
     def post(self, request):
         """Creates a hello message with our name."""
+
         serializer = serializers.HelloSerializer(data = request.data)
+
         if serializer.is_valid():
             name = serializer.data.get('name')
             message = 'Hello {0}'.format(name)
             return Response({'message' : message})
+
         else:
             return Response(
                 serializer.errors, status = status.HTTP_404_BAD_REQUEST)
@@ -53,6 +64,7 @@ class HelloViewSet (viewsets.ViewSet):
 
     def list(self, request):
         """Return a hello message."""
+
         a_viewset = [
             'Uses action (list, create, update, partial_update)',
             'Automatically maps to URLs using Routers',
@@ -62,6 +74,7 @@ class HelloViewSet (viewsets.ViewSet):
 
     def create(self, request):
         """Create a new hello message"""
+
 
         serializer = serializers.HelloSerializer(data = request.data)
 
@@ -94,3 +107,5 @@ class UserProfileViewSet(viewsets.ModelViewSet):
 
     serializer_class = serializers.UserProfileSerializer
     queryset = models.UserProfile.objects.all()
+    authentication_classes = {TokenAuthentication,}
+    permission_classes = (permissions.UpdateOwnProfile,)
