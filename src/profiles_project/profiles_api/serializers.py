@@ -1,9 +1,12 @@
 from rest_framework import serializers
 from . import models
 
+
 class HelloSerializer(serializers.Serializer):
     """Serializes a name field for tseting our APIView."""
+
     name = serializers.CharField(max_length = 10)
+
 
 class UserProfileSerializer(serializers.ModelSerializer):
     """A Serializer for user profile objects"""

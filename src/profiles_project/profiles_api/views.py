@@ -9,6 +9,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework import filters
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+from rest_framework.authtoken.views import ObtainAuthToken
 
 from . import serializers
 from . import models
@@ -48,15 +50,19 @@ class  HelloApiView(APIView):
 
     def put(self, request, pk=None):
         """Handles updating a object."""
+
         return Response({'method' : 'put'})
 
     def patch(self, request, pk=None):
         """Patch request, only updates fields provided in the request"""
+
         return Response({'method' : 'patch'})
 
     def delete(self, request, pk=None):
         """Deletes a object."""
+
         return Response({'method' : 'delete'})
+
 
 class HelloViewSet (viewsets.ViewSet):
     """Test API ViewSet."""
@@ -76,7 +82,6 @@ class HelloViewSet (viewsets.ViewSet):
     def create(self, request):
         """Create a new hello message"""
 
-
         serializer = serializers.HelloSerializer(data = request.data)
 
         if serializer.is_valid():
@@ -89,19 +94,24 @@ class HelloViewSet (viewsets.ViewSet):
 
     def retrieve(self, request, pk=None):
         """Handles getting object by its ID."""
+
         return Response({'http_method' : 'GET'})
 
     def update(self, request, pk=None):
         """Hnadles updating a object"""
+
         return Response({'http_method' : 'PUT'})
 
     def partial_update(self, request, pk=None):
         """Handles updating part of an object."""
+
         return Response({'http_method' : 'PATCH'})
 
     def destroy(self, request, pk=None):
         """Handles removing an object."""
+
         return Response({'http_method' : 'DELETE'})
+
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     """Handles creating, reading and updating profiles."""
@@ -112,3 +122,13 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.UpdateOwnProfile,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name', 'email',)
+
+class LoginViewSet(viewsets.ViewSet):
+    """Checks email and password and returns an auth token."""
+
+    serializer_class = AuthTokenSerializer
+
+    def create(self, request):
+        """Use the ObtainAuthToken API view to validate and create a token."""
+
+        return ObtainAuthToken().post(request)
